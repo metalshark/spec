@@ -1,163 +1,106 @@
 # Contributing to TOON Specification
 
-Thanks for your interest in contributing to the TOON specification! Whether you're fixing a typo, proposing a new feature, or clarifying ambiguous wording, your contributions help make TOON better for everyone.
+Thanks for your interest in contributing! This guide shows how to propose changes to the specification.
 
-This document outlines how to propose changes and improvements to the specification.
+## Quick Reference: What Process Do I Need?
 
-## Table of Contents
+| Change Type | Examples | Process |
+| ----------- | -------- | ------- |
+| **Fixes** | Typos, grammar, broken links, clarifying wording | Direct PR |
+| **Test Fixtures** | New test cases, edge case tests, validation tests | Direct PR (see [tests/README.md](./tests/README.md)) |
+| **Minor Changes** | Spec clarifications that may affect implementations | Issue first → PR |
+| **Major Changes** | New syntax, encoding rules, breaking changes | RFC process (see below) |
 
-- [Types of Contributions](#types-of-contributions)
-- [Before You Contribute](#before-you-contribute)
-- [Proposing Changes](#proposing-changes)
-- [RFC Process for Major Changes](#rfc-process-for-major-changes)
-- [Specification Principles](#specification-principles)
-- [Style Guidelines](#style-guidelines)
+## Does My Change Need an RFC?
 
-## Types of Contributions
+### Yes – RFC Required
 
-### Clarifications and Fixes
+Changes that affect compatibility or core behavior need community discussion:
 
-Small improvements that don't change behavior:
+```
+Adding new delimiter types (beyond comma/tab/pipe)
+  Example: Supporting semicolon as delimiter
 
-- Typo corrections
-- Grammar improvements
-- Clarifying ambiguous language
-- Adding examples
-- Fixing broken links
+Changing quoting or escape rules
+  Example: Adding \u0000 escape sequences
+  Example: Changing when colons require quotes
 
-**Process:** Open a pull request directly.
+Modifying tabular detection logic
+  Example: Allowing non-uniform objects in tabular format
 
-### Minor Changes
+New data type normalization rules
+  Example: Handling Map or Set differently
 
-Backward-compatible additions or clarifications that may affect implementations:
+Changing array header syntax
+  Example: Optional length markers becoming required
+```
 
-- Adding test cases
-- Clarifying edge case behavior
-- Adding informative appendices
-- Expanding examples
+### No – Direct PR or Issue First
 
-**Process:** Open an issue first to discuss, then submit a pull request.
+```
+Typo: "recieves" → "receives"                        → Direct PR
+Adding example for nested arrays                     → Direct PR
+Clarifying ambiguous wording                         → Issue → PR
+Expanding test coverage                              → Direct PR
+Documenting existing edge case behavior              → Issue → PR
+```
 
-### Contributing Test Fixtures
+## RFC Process
 
-Test fixtures are language-agnostic JSON files that validate TOON implementations. You can contribute:
+For major changes requiring RFC:
 
-- New test cases for uncovered scenarios
-- Edge case and error validation tests
-- Tests for spec clarifications
+1. **Create RFC Issue** using the Feature Request/RFC template
+2. **Discussion Period** (minimum 1-2 weeks for community feedback)
+3. **Decision** (maintainers accept, reject, or request revisions)
+4. **Implementation** (create PR referencing RFC issue)
 
-Add your test case to the appropriate file in `tests/fixtures/encode/` or `tests/fixtures/decode/`, validate it against `tests/fixtures.schema.json`, and submit a PR. See [tests/README.md](./tests/README.md) for complete documentation on fixture structure and guidelines.
+## Contributing Test Fixtures
 
-**Process:** Open a pull request directly.
+Test fixtures validate TOON implementations across languages. Add your test to `tests/fixtures/encode/` or `tests/fixtures/decode/`, validate against `tests/fixtures.schema.json`, and submit a PR.
 
-### Major Changes
+See [tests/README.md](./tests/README.md) for fixture structure and guidelines.
 
-Changes that affect compatibility or core behavior:
+## Pull Request Guidelines
 
-- New syntax features
-- Changes to encoding/decoding rules
-- Modifications to conformance requirements
-- Breaking changes
+1. Fork the repository and create a feature branch
+2. Make changes following [SPEC.md](./SPEC.md) style (RFC 2119 keywords, examples, precision)
+3. Update `CHANGELOG.md` with your changes
+4. Submit PR using the template and link related issues
 
-**Process:** Follow the RFC process (see below).
-
-## Before You Contribute
-
-Before contributing, check existing issues/PRs, review [SPEC.md](./SPEC.md), and consider backward compatibility.
-
-## Proposing Changes
-
-### Opening an Issue
-
-GitHub provides three issue templates: **Bug Report** (for spec errors/ambiguities), **Specification Clarification** (for interpretation questions), and **Feature Request/RFC** (for proposing changes). Select the appropriate template when creating an issue.
-
-### Submitting a Pull Request
-
-Fork the repository, make your changes following the style guidelines, update CHANGELOG.md, and submit a PR. Fill out the PR template completely and link related issues.
-
-### Review Process
-
-- Spec maintainers will review your contribution.
-- There may be discussion and requests for changes.
-- Once approved, maintainers will merge and assign a version number.
-- For breaking changes, the PR will be held until the next major version.
-
-## RFC Process for Major Changes
-
-Major changes require a Request for Comments (RFC) process:
-
-1. **Create an RFC Issue** using the Feature Request/RFC template
-2. **Discussion Period** – Community provides feedback (typically 1-2 weeks minimum)
-3. **Decision** – Maintainers accept, reject, or request revisions
-4. **Implementation** – Create a PR referencing the RFC issue number
-
-The RFC template and PR template will guide you through providing all necessary details.
+**Review process:**
+- Maintainers review and may request changes
+- Breaking changes held until next major version
+- Approved changes merged with version number assigned
 
 ## Specification Principles
 
-When contributing, keep these core principles in mind. They guide every decision we make about TOON:
+TOON prioritizes (in order):
 
-### 1. Token Efficiency
+1. **Token Efficiency** – Changes should maintain or improve token usage for LLM input
+2. **LLM-Friendly Structure** – Easy for LLMs to parse and generate (explicit markers are features)
+3. **Simplicity** – Prefer consistent rules over special cases
+4. **Backward Compatibility** – Breaking changes need strong justification
+5. **Interoperability** – Implementations must produce identical output for identical input
+6. **Human Readability** – Debuggable by humans despite machine optimization
 
-TOON's primary goal is reducing token usage for LLM input. Changes should maintain or improve token efficiency.
-
-### 2. LLM-Friendly Structure
-
-The format should be easy for LLMs to parse and generate. Explicit length markers and field declarations are features, not bugs.
-
-### 3. Human Readability
-
-While optimized for machines, TOON should remain reasonably readable by humans for debugging and validation.
-
-### 4. Simplicity
-
-Prefer simple, consistent rules over special cases. The spec should be implementable without extensive parsing libraries.
-
-### 5. Backward Compatibility
-
-Breaking changes require very strong justification. Prefer additive changes that maintain compatibility.
-
-### 6. Interoperability
-
-Multiple implementations should produce identical output for the same input. Ambiguity is not acceptable.
+These principles guide every decision. When in doubt, optimize for token efficiency first.
 
 ## Style Guidelines
 
-### Writing Style
+Follow [SPEC.md](./SPEC.md) conventions:
 
-- Use RFC 2119 keywords (MUST, SHOULD, MAY) correctly
-- Be precise and unambiguous
-- Use examples to clarify complex rules
-- Keep language concise but complete
-- Use active voice where possible
-
-### Formatting
-
-- Use proper markdown formatting
-- Include code blocks with language hints
-- Use section numbering consistently
-- Add cross-references to related sections
-- Keep line length reasonable (80-120 characters)
-
-### Examples
-
-- Show both input and output
-- Include edge cases
-- Demonstrate both valid and invalid cases
-- Add comments explaining non-obvious behavior
+- **RFC 2119 keywords**: Use MUST/SHOULD/MAY correctly (see SPEC.md §1)
+- **Examples over prose**: Show concrete input/output for complex rules
+- **Precision**: Zero ambiguity – multiple implementations must agree
+- **Structure**: Number sections, cross-reference related rules
+- **Line length**: 80-120 characters for readability
 
 ## Questions?
 
-If you have questions about contributing:
-
-1. Check existing issues and discussions.
-2. Open a new issue with the `question` label.
-3. Reach out to maintainers.
-
-## Code of Conduct
-
-Be respectful and constructive in all interactions. We're building this specification together, and diverse perspectives make it better.
+1. Check existing issues and discussions
+2. Open an issue with the `question` label
+3. Reach out to maintainers
 
 ## License
 
-By contributing to this specification, you agree that your contributions will be licensed under the MIT License.
+By contributing, you agree your contributions will be licensed under the MIT License. Be respectful and constructive – diverse perspectives make TOON better.
