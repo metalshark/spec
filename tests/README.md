@@ -196,7 +196,7 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for detailed guidelines.
 
 ## Reference Implementation
 
-The reference implementation in TypeScript/JavaScript is maintained at: [github.com/johannschopplich/toon](https://github.com/johannschopplich/toon)
+The reference implementation in TypeScript/JavaScript is maintained at: [github.com/toon-format/toon](https://github.com/toon-format/toon)
 
 ## Questions or Issues?
 

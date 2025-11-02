@@ -20,7 +20,7 @@ Token-Oriented Object Notation (TOON) is a compact, human-readable serialization
 
 ## Status of This Document
 
-This document is a Working Draft v1.3 and may be updated, replaced, or obsoleted. Implementers should monitor the canonical repository at https://github.com/johannschopplich/toon for changes.
+This document is a Working Draft v1.3 and may be updated, replaced, or obsoleted. Implementers should monitor the canonical repository at https://github.com/toon-format/toon for changes.
 
 This specification is stable for implementation but not yet finalized. Breaking changes are unlikely but possible before v2.0.
 
@@ -767,7 +767,7 @@ Intended usage: COMMON (upon standardization)
 
 Restrictions on usage: None
 
-Change controller: Community-maintained. See repository at https://github.com/johannschopplich/toon
+Change controller: Community-maintained. See repository at https://github.com/toon-format/toon
 
 ### 18.3 Implementation Status
 
@@ -963,7 +963,7 @@ These sketches illustrate structure and common decoding helpers. They are inform
 ### Reference Test Suite
 
 A reference test suite is maintained at:
-https://github.com/johannschopplich/toon/tree/main/packages/toon/test
+https://github.com/toon-format/toon/tree/main/packages/toon/test
 
 The test suite is versioned alongside this specification. Implementations are encouraged to validate against this test suite, but conformance is determined solely by adherence to the normative requirements in Sections 1-16 and Section 19 of this specification. Test coverage does not define the specification; the specification defines conformance.
 
@@ -1015,7 +1015,7 @@ This specification was created and is maintained by Johann Schopplich, who also 
 
 ### Community Implementations
 
-Implementations of TOON in other languages have been created by community members. For a complete list with repository links and maintainer information, see the [Other Implementations](https://github.com/johannschopplich/toon#other-implementations) section of the README.
+Implementations of TOON in other languages have been created by community members. For a complete list with repository links and maintainer information, see the [Other Implementations](https://github.com/toon-format/toon#other-implementations) section of the README.
 
 ### License
 

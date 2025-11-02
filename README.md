@@ -52,7 +52,7 @@ users[2]{id,name,role}:
 
 ## Reference Implementation
 
-The reference implementation in TypeScript/JavaScript is maintained at: [github.com/johannschopplich/toon](https://github.com/johannschopplich/toon)
+The reference implementation in TypeScript/JavaScript is maintained at: [github.com/toon-format/toon](https://github.com/toon-format/toon)
 
 The reference implementation includes:
 
@@ -103,8 +103,8 @@ The TOON specification follows semantic versioning. See [VERSIONING.md](./VERSIO
 - **Examples:** [examples/](./examples/) - Working examples organized by feature
 - **Test Fixtures:** [tests/fixtures/](./tests/fixtures/) - Comprehensive test suite
 - **Changelog:** [CHANGELOG.md](./CHANGELOG.md) - Version history and changes
-- **Reference Implementation:** [github.com/johannschopplich/toon](https://github.com/johannschopplich/toon) - TypeScript/JavaScript implementation
-- **Benchmarks:** [Reference repo benchmarks/](https://github.com/johannschopplich/toon/tree/main/benchmarks) - Token efficiency measurements
+- **Reference Implementation:** [github.com/toon-format/toon](https://github.com/toon-format/toon) - TypeScript/JavaScript implementation
+- **Benchmarks:** [Reference repo benchmarks/](https://github.com/toon-format/toon/tree/main/benchmarks) - Token efficiency measurements and accuracy retrieval tests
 
 ## License
 
