@@ -82,6 +82,22 @@
         "items": ["[5]", "- item", "{key}"]
       },
       "specSection": "7.1"
+    },
+    {
+      "name": "parses quoted key with inline array",
+      "input": "\"my-key\"[3]: 1,2,3",
+      "expected": {
+        "my-key": [1, 2, 3]
+      },
+      "specSection": "7.1"
+    },
+    {
+      "name": "parses quoted key with empty array",
+      "input": "\"x-custom\"[0]:",
+      "expected": {
+        "x-custom": []
+      },
+      "specSection": "7.1"
     }
   ]
 }

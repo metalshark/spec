@@ -35,6 +35,17 @@
         ]
       },
       "specSection": "7.2"
+    },
+    {
+      "name": "parses quoted key with tabular array format",
+      "input": "\"x-items\"[2]{id,name}:\n  1,Ada\n  2,Bob",
+      "expected": {
+        "x-items": [
+          { "id": 1, "name": "Ada" },
+          { "id": 2, "name": "Bob" }
+        ]
+      },
+      "specSection": "7.2"
     }
   ]
 }

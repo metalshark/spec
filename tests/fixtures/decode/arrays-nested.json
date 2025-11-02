@@ -151,6 +151,17 @@
         "items": [{ "a": 1 }, [1, 2]]
       },
       "specSection": "7.3"
+    },
+    {
+      "name": "parses quoted key with list array format",
+      "input": "\"x-items\"[2]:\n  - id: 1\n  - id: 2",
+      "expected": {
+        "x-items": [
+          { "id": 1 },
+          { "id": 2 }
+        ]
+      },
+      "specSection": "7"
     }
   ]
 }
