@@ -110,26 +110,42 @@ Quick checklist before opening an issue or PR:
 
 ### Opening an Issue
 
-When opening an issue, please include:
+When creating an issue, GitHub will prompt you to choose from three templates based on your needs:
 
-1. **Clear description** of the problem or proposed change.
-2. **Current behavior** (with spec references if applicable).
-3. **Proposed behavior** (what should change and why).
-4. **Examples** demonstrating the issue or improvement.
-5. **Impact assessment** on existing implementations.
-6. **Alternatives considered** (if applicable).
+1. **Bug Report** - For specification errors, ambiguities, contradictions, or inconsistencies
+   - Use when: The spec has an error or unclear language that needs fixing.
+   - Includes: Specification references, current vs. expected behavior, impact assessment.
+
+2. **Specification Clarification** - For questions about interpreting the spec
+   - Use when: You need clarification on what the spec means or how it should be interpreted.
+   - Includes: Section references, source of confusion, example cases.
+
+3. **Feature Request / RFC** - For proposing new features or changes
+   - Use when: Proposing backward-compatible additions or breaking changes.
+   - Includes: Full RFC structure (summary, motivation, design, examples, drawbacks, alternatives, impact, migration).
+   - Note: Follows the RFC process described below for major changes.
+
+Each template guides you through providing the necessary information. If you're unsure which template to use, start with "Specification Clarification" - maintainers can reclassify if needed.
 
 ### Submitting a Pull Request
 
+When you create a pull request, GitHub will show a comprehensive PR template that guides you through documenting your changes. The template includes sections for:
+
+- **Type of Change** - Clarification, documentation, minor change, major change, or test fixtures
+- **Motivation and Context** - Why the change is needed
+- **Specification Sections Affected** - Which parts of SPEC.md are modified
+- **Backward Compatibility** - Impact on existing implementations
+- **Examples** - Before/after demonstrations
+- **Test Coverage** - What tests validate the changes
+- **Documentation Updates** - Which docs need updating (SPEC.md, CHANGELOG.md, etc.)
+
+**Quick checklist:**
+
 1. **Fork the repository** and create a branch from `main`.
 2. **Make your changes** following the style guidelines.
-3. **Update examples** if your change affects them.
-4. **Update CHANGELOG.md** with your changes.
-5. **Write a clear PR description** explaining:
-   - What changed and why.
-   - How it affects implementations.
-   - Whether it's backward-compatible.
-6. **Link related issues** in your PR description.
+3. **Update CHANGELOG.md** with your changes.
+4. **Fill out the PR template** completely - it ensures nothing is missed.
+5. **Link related issues** in your PR description.
 
 ### Review Process
 
@@ -144,44 +160,27 @@ Major changes require a Request for Comments (RFC) process. This ensures communi
 
 ### 1. Create an RFC Issue
 
-Open an issue with the `[RFC]` prefix and include:
+Use the **"Feature Request / RFC"** issue template on GitHub, which will prompt you for:
 
-```markdown
-# [RFC] Title of Your Proposal
+- **Summary** - Brief overview of the proposed change
+- **Motivation** - Why is this change needed? What problems does it solve?
+- **Detailed Design** - Technical specification with encoding/decoding rules, grammar changes, etc.
+- **Examples** - Before/after code examples showing the change in action
+- **Drawbacks** - Costs and downsides of the proposal
+- **Alternatives Considered** - Other designs and why this approach is better
+- **Impact on Implementations** - How existing implementations will be affected
+- **Migration Strategy** - How implementations and users should adopt the change (if breaking)
+- **Test Cases** - Test fixtures demonstrating the proposed behavior
+- **Unresolved Questions** - Parts that still need discussion
 
-## Summary
-Brief overview of the change
-
-## Motivation
-Why is this change needed? What problems does it solve?
-
-## Detailed Design
-Technical specification of the proposed change
-
-## Examples
-Code examples showing the change in action
-
-## Drawbacks
-What are the costs and downsides?
-
-## Alternatives
-What other designs were considered?
-
-## Impact on Implementations
-How will this affect existing implementations?
-
-## Migration Strategy
-How should implementations adopt this change?
-
-## Unresolved Questions
-What parts need more discussion?
-```
+The issue will be automatically labeled with `RFC` for visibility.
 
 ### 2. Discussion Period
 
 - Community members and implementers provide feedback.
 - The RFC is iterated based on feedback.
 - Discussion typically lasts 1-2 weeks minimum.
+- Consider all perspectives - implementers, users, and maintainers.
 
 ### 3. Decision
 
@@ -192,8 +191,9 @@ What parts need more discussion?
 ### 4. Implementation
 
 - Create a PR implementing the RFC.
-- PR must reference the RFC issue.
+- PR must reference the RFC issue number.
 - Additional review occurs during PR phase.
+- The PR template will guide you through documenting the implementation.
 
 ## Specification Principles
 
