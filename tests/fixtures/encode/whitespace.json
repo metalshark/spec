@@ -24,6 +24,21 @@
       "expected": "user:\n  id: 123\n  name: Ada\nitems[2]: a,b",
       "specSection": "12",
       "note": "2-space indentation, no trailing spaces on any line"
+    },
+    {
+      "name": "respects custom indent size option",
+      "input": {
+        "user": {
+          "name": "Ada",
+          "role": "admin"
+        }
+      },
+      "expected": "user:\n    name: Ada\n    role: admin",
+      "specSection": "12",
+      "options": {
+        "indent": 4
+      },
+      "note": "4-space indentation for nested objects when indent option is set to 4"
     }
   ]
 }

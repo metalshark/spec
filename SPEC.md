@@ -16,9 +16,7 @@
 
 ## Abstract
 
-Token-Oriented Object Notation (TOON) is a compact, human-readable serialization format optimized for Large Language Model (LLM) inputs. TOON preserves the JSON data model while eliminating repetitive keys and punctuation, achieving large token savings for arrays of uniform objects. Arrays declare their length and field names once, then stream rows using a single active delimiter (comma, tab, or pipe); objects use indentation instead of braces; strings are quoted only when required.
-
-The format's explicit structure (lengths, field lists, delimiter scoping, and minimal quoting) provides guardrails that make data easy for LLMs to parse and validate. TOON typically saves 30–60% tokens versus pretty-printed JSON on tabular data, while CSV remains more compact for flat tables. This specification defines TOON's concrete syntax, canonical number form, parsing and validation semantics, and conformance requirements for encoders, decoders, and validators. TOON is intended as a translation layer for LLM prompts, not a general-purpose API or storage replacement for JSON.
+Token-Oriented Object Notation (TOON) is a line-oriented, indentation-based text format that encodes the JSON data model with explicit structure and minimal quoting. Arrays declare their length and an optional field list once; rows use a single, in-scope delimiter (comma, tab, or pipe). Objects use indentation instead of braces; strings are quoted only when required. This document defines TOON's concrete syntax, canonical number formatting, delimiter scoping, and strict-mode validation rules for encoders, decoders, and validators. TOON is designed for compact, deterministic representation of structured data and is particularly efficient for arrays of uniform objects.
 
 ## Status of This Document
 
@@ -105,25 +103,6 @@ LLM tokens are costly and context-limited. Repeating JSON keys in large arrays w
 - CSV/TSV: Most compact for flat tables, but lacks nesting, type awareness, row counts, and field disambiguation. TOON adds minimal overhead to gain explicit structure (length markers [N], in-scope delimiter, field names, deterministic quoting) that improves LLM reliability.
 - YAML: Similar indentation style; TOON is more constrained and deterministic, with explicit array headers, fixed quoting rules, and no comments.
 
-### At a Glance
-
-JSON:
-```json
-{
-  "users": [
-    { "id": 1, "name": "Alice", "role": "admin" },
-    { "id": 2, "name": "Bob", "role": "user" }
-  ]
-}
-```
-
-TOON:
-```
-users[2]{id,name,role}:
-  1,Alice,admin
-  2,Bob,user
-```
-
 ### Design Principles
 
 - Token efficiency where it matters: arrays of uniform objects.
@@ -154,41 +133,41 @@ All normative text in this specification is contained in Sections 1-16 and Secti
 
 Implementations that fail to conform to any MUST or REQUIRED level requirement are non-conformant. Implementations that conform to all MUST and REQUIRED level requirements but fail to conform to SHOULD or RECOMMENDED level requirements are said to be "not fully conformant" but are still considered conformant.
 
-### Core Concepts
+### 1.2 Core Concepts
 
 - TOON document: A sequence of UTF-8 text lines formatted according to this spec.
 - Line: A sequence of non-newline characters terminated by LF (U+000A) in serialized form. Encoders MUST use LF.
 
-### Structural Terms
+### 1.3 Structural Terms
 
 - Indentation level (depth): Leading indentation measured in fixed-size space units (indentSize). Depth 0 has no indentation.
 - Indentation unit (indentSize): A fixed number of spaces per level (default 2). Tabs MUST NOT be used for indentation.
 
-### Array Terms
+### 1.4 Array Terms
 
 - Header: The bracketed declaration for arrays, optionally followed by a field list, and terminating with a colon; e.g., key[3]: or items[2]{a,b}:.
 - Field list: Brace-enclosed, delimiter-separated list of field names for tabular arrays: {f1<delim>f2}.
 - List item: A line beginning with "- " at a given depth representing an element in an expanded array.
 - Length marker: Optional "#" prefix for array lengths in headers, e.g., [#3]. Decoders MUST accept and ignore it semantically.
 
-### Delimiter Terms
+### 1.5 Delimiter Terms
 
 - Delimiter: The character used to separate array/tabular values: comma (default), tab (HTAB, U+0009), or pipe ("|").
 - Document delimiter: The encoder-selected delimiter used for quoting decisions outside any array scope (default comma).
 - Active delimiter: The delimiter declared by the closest array header in scope, used to split inline primitive arrays and tabular rows under that header; it also governs quoting decisions for values within that array's scope.
 
-### Type Terms
+### 1.6 Type Terms
 
 - Primitive: string, number, boolean, or null.
 - Object: Mapping from string keys to `JsonValue`.
 - Array: Ordered sequence of `JsonValue`.
 - `JsonValue`: Primitive | Object | Array.
 
-### Conformance Terms
+### 1.7 Conformance Terms
 
 - Strict mode: Decoder mode that enforces counts, indentation, and delimiter consistency; also rejects invalid escapes and missing colons (default: true).
 
-### Notation
+### 1.8 Notation
 
 - Regular expressions appear in slash-delimited form.
 - ABNF snippets follow RFC 5234; HTAB means the U+0009 character.
@@ -279,6 +258,7 @@ TOON is a deterministic, line-oriented, indentation-based notation.
   - If the first non-empty depth-0 line is a valid root array header per Section 6 (must include a colon), decode a root array.
   - Else if the document has exactly one non-empty line and it is neither a valid array header nor a key-value line (quoted or unquoted key), decode a single primitive (examples: `hello`, `42`, `true`).
   - Otherwise, decode an object.
+  - An empty document (no non-empty lines after ignoring trailing newline(s) and ignorable blank lines) decodes to an empty object `{}`.
   - In strict mode, if there are two or more non-empty depth-0 lines that are neither headers nor key-value lines, the document is invalid. Example of invalid input (strict mode):
     ```
     hello
@@ -427,6 +407,7 @@ Keys requiring quoting per the above rules MUST be quoted in all contexts, inclu
   - Root arrays: [N<delim?>]: v1<delim>…
 - Decoding:
   - Split using the active delimiter declared by the header; non-active delimiters MUST NOT split values.
+  - When splitting inline arrays, empty tokens (including those surrounded by whitespace) decode to the empty string.
   - In strict mode, the number of decoded values MUST equal N; otherwise MUST error.
 
 ### 9.2 Arrays of Arrays (Primitives Only) — Expanded List
@@ -516,13 +497,13 @@ Decoding:
 - Document vs Active delimiter:
   - Encoders select a document delimiter (option) that influences quoting for all object values (key: value) throughout the document.
   - Inside an array header's scope, the active delimiter governs splitting and quoting only for inline arrays and tabular rows that the header introduces. Object values (key: value) follow document-delimiter quoting rules regardless of array scope.
-  - Absence of a delimiter symbol in a header ALWAYS means comma for that array's scope; it does not inherit from any parent.
 - Delimiter-aware quoting (encoding):
   - Inline array values and tabular row cells: strings containing the active delimiter MUST be quoted to avoid splitting.
   - Object values (key: value): encoders use the document delimiter to decide delimiter-aware quoting, regardless of whether the object appears within an array's scope.
   - Strings containing non-active delimiters do not require quoting unless another quoting condition applies (Section 7.2).
 - Delimiter-aware parsing (decoding):
   - Inline arrays and tabular rows MUST be split only on the active delimiter declared by the nearest array header.
+  - Splitting MUST preserve empty tokens; surrounding spaces are trimmed, and empty tokens decode to the empty string.
   - Strings containing the active delimiter MUST be quoted to avoid splitting; non-active delimiters MUST NOT cause splits.
   - Nested headers may change the active delimiter; decoding MUST use the delimiter declared by the nearest header.
   - If the bracket declares tab or pipe, the same symbol MUST be used in the fields segment and for splitting all rows/values in that scope.
@@ -588,7 +569,7 @@ Options:
   - indent (default: 2 spaces)
   - strict (default: true)
 
-Note: Section 14 is authoritative for strict-mode errors; validators MAY add informative diagnostics for style and encoding invariants.
+Strict-mode errors are enumerated in §14; validators MAY add informative diagnostics for style and encoding invariants.
 
 ### 13.1 Encoder Conformance Checklist
 
@@ -650,7 +631,7 @@ When strict mode is enabled (default), decoders MUST error on the following cond
 
 - Blank lines inside arrays/tabular rows.
 
-Note: A completely empty document (no non-empty lines after ignoring trailing newline(s) and ignorable blank lines) decodes to an empty object `{}`.
+For root-form rules, including handling of empty documents, see §5.
 
 ### 14.5 Recommended Error Messages and Validator Diagnostics (Informative)
 
