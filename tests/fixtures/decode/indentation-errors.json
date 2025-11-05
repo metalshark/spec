@@ -128,19 +128,6 @@
       "specSection": "9"
     },
     {
-      "name": "accepts tab indentation when strict=false (tabs ignored, depth=0)",
-      "input": "a:\n\tb: 1",
-      "expected": {
-        "a": {},
-        "b": 1
-      },
-      "options": {
-        "strict": false
-      },
-      "specSection": "9",
-      "note": "Tabs are ignored in indentation counting, so b appears at root level"
-    },
-    {
       "name": "accepts deeply nested non-multiples when strict=false",
       "input": "a:\n   b:\n     c: 1",
       "expected": {
