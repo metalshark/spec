@@ -16,7 +16,7 @@
 
 ## Abstract
 
-Token-Oriented Object Notation (TOON) is a line-oriented, indentation-based text format that encodes the JSON data model with explicit structure and minimal quoting. Arrays declare their length and an optional field list once; rows use a single, in-scope delimiter (comma, tab, or pipe). Objects use indentation instead of braces; strings are quoted only when required. This document defines TOON's concrete syntax, canonical number formatting, delimiter scoping, and strict-mode validation rules for encoders, decoders, and validators. TOON is designed for compact, deterministic representation of structured data and is particularly efficient for arrays of uniform objects.
+Token-Oriented Object Notation (TOON) is a line-oriented, indentation-based text format that encodes the JSON data model with explicit structure and minimal quoting. Arrays declare their length and an optional field list once; rows use a single active delimiter (comma, tab, or pipe). Objects use indentation instead of braces; strings are quoted only when required. This specification defines TOON’s concrete syntax, canonical number formatting, delimiter scoping, and strict‑mode validation, and sets conformance requirements for encoders, decoders, and validators. TOON provides a compact, deterministic representation of structured data and is particularly efficient for arrays of uniform objects.
 
 ## Status of This Document
 
