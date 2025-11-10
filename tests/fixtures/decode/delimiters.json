@@ -241,14 +241,6 @@
         "items": [{ "a|b": 1 }, { "a|b": 2 }]
       },
       "specSection": "11"
-    },
-    {
-      "name": "accepts length marker with pipe delimiter",
-      "input": "tags[#3|]: reading|gaming|coding",
-      "expected": {
-        "tags": ["reading", "gaming", "coding"]
-      },
-      "specSection": "6"
     }
   ]
 }

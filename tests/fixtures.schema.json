@@ -10,7 +10,7 @@
       "type": "string",
       "description": "TOON specification version these tests target",
       "pattern": "^\\d+\\.\\d+$",
-      "examples": ["1.0", "1.3"]
+      "examples": ["1.0", "1.6"]
     },
     "category": {
       "type": "string",
@@ -66,11 +66,6 @@
                 "description": "Number of spaces per indentation level",
                 "minimum": 1,
                 "default": 2
-              },
-              "lengthMarker": {
-                "type": "string",
-                "const": "#",
-                "description": "Optional marker to prefix array lengths (encode only). Omit to disable the marker."
               },
               "strict": {
                 "type": "boolean",

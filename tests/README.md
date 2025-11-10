@@ -92,7 +92,6 @@ All test fixtures follow a standard JSON structure defined in [`fixtures.schema.
 {
   "delimiter": ",",
   "indent": 2,
-  "lengthMarker": "#",
   "keyFolding": "safe",
   "flattenDepth": 3
 }
@@ -100,7 +99,6 @@ All test fixtures follow a standard JSON structure defined in [`fixtures.schema.
 
 - `delimiter`: `","` (comma, default), `"\t"` (tab), or `"|"` (pipe). Affects encoder output; decoders parse the delimiter declared in array headers
 - `indent`: Number of spaces per indentation level (default: `2`)
-- `lengthMarker`: Optional. Set to `"#"` to prefix array lengths (e.g., `[#3]`). Omit this property to disable length markers
 - `keyFolding`: `"off"` (default) or `"safe"`. Enables key folding to collapse single-key object chains into dotted-path notation (v1.5+)
 - `flattenDepth`: Integer. Maximum depth to fold key chains when `keyFolding` is `"safe"` (default: Infinity). Values less than 2 have no practical folding effect (v1.5+)
 
@@ -161,7 +159,6 @@ The fixture format is language-agnostic JSON, so you can load and iterate it usi
 | `arrays-objects.json` | Objects as list items, complex nesting | §9, §10 |
 | `delimiters.json` | Tab and pipe delimiter options | §11 |
 | `whitespace.json` | Formatting invariants and indentation | §12 |
-| `options.json` | Length marker and delimiter option combinations | §3 |
 | `key-folding.json` | Key folding with safe mode, depth control, collision avoidance | §13.4 |
 
 ### Decoding Tests (`fixtures/decode/`)

@@ -32,7 +32,7 @@ New data type normalization rules
   Example: Handling Map or Set differently
 
 Changing array header syntax
-  Example: Optional length markers becoming required
+  Example: Making field lists mandatory for all arrays
 ```
 
 ### No – Direct PR or Issue First

@@ -2,7 +2,7 @@
 
 ## Token-Oriented Object Notation
 
-**Version:** 1.5
+**Version:** 2.0
 
 **Date:** 2025-11-10
 
@@ -20,9 +20,9 @@ Token-Oriented Object Notation (TOON) is a line-oriented, indentation-based text
 
 ## Status of This Document
 
-This document is a Working Draft v1.4 and may be updated, replaced, or obsoleted. Implementers should monitor the canonical repository at https://github.com/toon-format/spec for changes.
+This document is a Working Draft v2.0 and may be updated, replaced, or obsoleted. Implementers should monitor the canonical repository at https://github.com/toon-format/spec for changes.
 
-This specification is stable for implementation but not yet finalized. Breaking changes are unlikely but possible before v2.0.
+This specification is stable for implementation but not yet finalized. Breaking changes may occur in future major versions.
 
 ## Normative References
 
@@ -165,7 +165,6 @@ Implementations that fail to conform to any MUST or REQUIRED level requirement a
 - Header: The bracketed declaration for arrays, optionally followed by a field list, and terminating with a colon; e.g., key[3]: or items[2]{a,b}:.
 - Field list: Brace-enclosed, delimiter-separated list of field names for tabular arrays: {f1<delim>f2}.
 - List item: A line beginning with "- " at a given depth representing an element in an expanded array.
-- Length marker: Optional "#" prefix for array lengths in headers, e.g., [#3]. Decoders MUST accept and ignore it semantically.
 
 ### 1.5 Delimiter Terms
 
@@ -294,13 +293,12 @@ TOON is a deterministic, line-oriented, indentation-based notation.
 Array headers declare length and active delimiter, and optionally field names.
 
 General forms:
-- Root header (no key): [<marker?>N<delim?>]:
-- With key: key[<marker?>N<delim?>]:
-- Tabular fields: key[<marker?>N<delim?>]{field1<delim>field2<delim>…}:
+- Root header (no key): [N<delim?>]:
+- With key: key[N<delim?>]:
+- Tabular fields: key[N<delim?>]{field1<delim>field2<delim>…}:
 
 Where:
 - N is the non-negative integer length.
-- <marker?> is optional "#"; decoders MUST accept and ignore it semantically.
 - <delim?> is:
   - absent for comma (","),
   - HTAB (U+0009) for tab,
@@ -329,7 +327,7 @@ LF     = %x0A                ; line feed
 SP     = %x20                ; space
 
 ; Header syntax
-bracket-seg   = "[" [ "#" ] 1*DIGIT [ delimsym ] "]"
+bracket-seg   = "[" 1*DIGIT [ delimsym ] "]"
 delimsym      = HTAB / "|"
 ; Field names are keys (quoted/unquoted) separated by the active delimiter
 fields-seg    = "{" fieldname *( delim fieldname ) "}"
@@ -592,7 +590,6 @@ Options:
 - Encoder options:
   - indent (default: 2 spaces)
   - delimiter (document delimiter; default: comma; alternatives: tab, pipe)
-  - lengthMarker (default: disabled)
   - keyFolding (default: `"off"`; alternatives: `"safe"`)
   - flattenDepth (default: Infinity when keyFolding is `"safe"`; non-negative integer ≥ 0; values 0 or 1 have no practical folding effect)
 - Decoder options:
@@ -700,7 +697,6 @@ Conforming decoders MUST:
 - [ ] Unescape quoted strings with only valid escapes (§7.1)
 - [ ] Type unquoted primitives: true/false/null → booleans/null, numeric → number, else → string (§4)
 - [ ] Enforce strict-mode rules when `strict=true` (§14)
-- [ ] Accept and ignore optional # length marker (§6)
 - [ ] Preserve array order and object key order (§2)
 - [ ] When `expandPaths="safe"`, expansion MUST follow §13.4 (IdentifierSegment-only segments, deep merge, conflict rules)
 - [ ] When `expandPaths="safe"` with `strict=true`, MUST error on expansion conflicts per §14.5
@@ -1007,14 +1003,6 @@ items[2	]{sku	name	qty	price}:
 tags[3|]: reading|gaming|coding
 ```
 
-Length marker:
-```
-tags[#3]: reading,gaming,coding
-pairs[#2]:
-  - [#2]: a,b
-  - [#2]: c,d
-```
-
 Quoted colons and disambiguation (rows continue; colon is inside quotes):
 ```
 links[2]{id,url}:
@@ -1157,12 +1145,11 @@ These sketches illustrate structure and common decoding helpers. They are inform
 ### B.2 Array Header Parsing
 
 - Locate the first "[ … ]" segment on the line; parse:
-  - Optional leading "#" marker (ignored semantically).
   - Length N as decimal integer.
   - Optional delimiter symbol at the end: HTAB or pipe (comma otherwise).
 - If a "{ … }" fields segment occurs between the "]" and the ":", parse field names using the active delimiter; unescape quoted names.
 - Require a colon ":" after the bracket/fields segment.
-- Return the header (key?, length, delimiter, fields?, hasLengthMarker) and any inline values after the colon.
+- Return the header (key?, length, delimiter, fields?) and any inline values after the colon.
 - Absence of a delimiter symbol in the bracket segment ALWAYS means comma for that header (no inheritance).
 
 ### B.3 parseDelimitedValues
@@ -1231,6 +1218,14 @@ Note: Host-type normalization tests (e.g., BigInt, Date, Set, Map) are language-
 
 ## Appendix D: Document Changelog (Informative)
 
+### v2.0 (2025-11-10)
+
+- Breaking change: Length marker (`#`) prefix in array headers has been completely removed from the specification.
+- The `[#N]` format is no longer valid syntax. All array headers MUST use `[N]` format only.
+- Encoders MUST NOT emit `[#N]` format.
+- Decoders MUST NOT accept `[#N]` format (breaking change from v1.5).
+- Removed all references to length marker from terminology, grammar, conformance requirements, and parsing helpers.
+
 ### v1.5 (2025-11-08)
 
 - Added optional key folding for encoders: `keyFolding='safe'` mode with `flattenDepth` control (§13.4).
@@ -1291,7 +1286,6 @@ This specification and reference implementation are released under the MIT Licen
 - The reference encoder/decoder test suites implement:
   - Safe-unquoted string rules and delimiter-aware quoting (document vs active delimiter).
   - Header formation and delimiter-aware parsing with active delimiter scoping.
-  - Length marker propagation (encoding) and acceptance (decoding).
   - Tabular detection requiring uniform keys and primitive-only values.
   - Objects-as-list-items parsing (+2 nested object rule; +1 siblings).
   - Whitespace invariants for encoding and strict-mode indentation enforcement for decoding.
