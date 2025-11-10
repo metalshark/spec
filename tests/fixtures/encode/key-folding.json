@@ -198,17 +198,17 @@
     {
       "name": "encodes folded chains preserving sibling field order",
       "input": {
-        "folded": {
-          "path": {
-            "value": 1
+        "first": {
+          "second": {
+            "third": 1
           }
         },
-        "normal": 2,
-        "nested": {
-          "x": 3
+        "simple": 2,
+        "short": {
+          "path": 3
         }
       },
-      "expected": "folded.path.value: 1\nnormal: 2\nnested.x: 3",
+      "expected": "first.second.third: 1\nsimple: 2\nshort.path: 3",
       "options": {
         "keyFolding": "safe"
       },
