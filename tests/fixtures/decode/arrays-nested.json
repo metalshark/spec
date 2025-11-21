@@ -69,10 +69,10 @@
     },
     {
       "name": "parses objects containing arrays (including empty arrays) in list format",
-      "input": "items[1]:\n  - name: test\n    data[0]:",
+      "input": "items[1]:\n  - name: Ada\n    data[0]:",
       "expected": {
         "items": [
-          { "name": "test", "data": [] }
+          { "name": "Ada", "data": [] }
         ]
       },
       "specSection": "9.4"
@@ -138,16 +138,22 @@
       "specSection": "9.4"
     },
     {
-      "name": "parses empty root arrays",
-      "input": "[0]:",
-      "expected": [],
-      "specSection": "9.1"
+      "name": "parses root arrays mixing primitive, object, and array of objects in list format",
+      "input": "[3]:\n  - summary\n  - id: 1\n    name: Ada\n  - [2]:\n    - id: 2\n    - status: draft",
+      "expected": ["summary", { "id": 1, "name": "Ada" }, [{ "id": 2 }, { "status": "draft" }]],
+      "specSection": "9.4"
     },
     {
       "name": "parses root arrays of arrays",
       "input": "[2]:\n  - [2]: 1,2\n  - [0]:",
       "expected": [[1, 2], []],
       "specSection": "9.2"
+    },
+    {
+      "name": "parses empty root arrays",
+      "input": "[0]:",
+      "expected": [],
+      "specSection": "9.1"
     },
     {
       "name": "parses complex mixed object with arrays and nested objects",
