@@ -1,6 +1,8 @@
 user:
-  profile.name: Ada Lovelace
-  profile.email: ada@example.com
-  settings.theme: dark
-  settings.notifications: true
+  profile:
+    name: Ada Lovelace
+    email: ada@example.com
+  settings:
+    theme: dark
+    notifications: true
 system.version: 1.5.0
