@@ -52,6 +52,11 @@ Complete, valid TOON files demonstrating core features:
   - Useful for TSV-like data
   - Spec: §11 Delimiters
 
+- [`valid/delimiter-scoping.toon`](valid/delimiter-scoping.toon) - Document vs active delimiter
+  - Shows that tabular row cells split only on the active delimiter
+  - Shows that object field values still follow document delimiter quoting rules
+  - Spec: §11.1 Delimiters (Encoding Rules)
+
 ### Key Folding and Path Expansion (v1.5+)
 
 > Regenerate any of these examples via the reference CLI, e.g. `npx @toon-format/cli --encode --keyFolding safe examples/valid/key-folding-basic.json --output examples/valid/key-folding-basic.toon`.
@@ -87,45 +92,49 @@ Complete, valid TOON files demonstrating core features:
 
 Examples that intentionally violate TOON syntax rules:
 
-- **[`invalid/length-mismatch.toon`](invalid/length-mismatch.toon)** - Array length mismatch
+- [`invalid/length-mismatch.toon`](invalid/length-mismatch.toon) - Array length mismatch
   - Declares `[3]` but provides only 2 items
   - Should fail validation in strict mode
   - Spec: §14.1 Strict Mode (Array Count & Width)
 
-- **[`invalid/missing-colon.toon`](invalid/missing-colon.toon)** - Missing colon after key
+- [`invalid/missing-colon.toon`](invalid/missing-colon.toon) - Missing colon after key
   - Keys must be followed by `:`; when a value appears on the same line, the format MUST be `: ` (colon + single space)
   - Demonstrates common syntax error
   - Spec: §8 Objects, §14.2 Syntax Errors
 
-- **[`invalid/path-expansion-conflict-strict.toon`](invalid/path-expansion-conflict-strict.toon)** - Path expansion conflict (v1.5+)
+- [`invalid/path-expansion-conflict-strict.toon`](invalid/path-expansion-conflict-strict.toon) - Path expansion conflict (v1.5+)
   - First line creates nested path `user.profile.name`, second line tries to assign primitive to `user.profile`
   - Fails when decoded with `expandPaths="safe"` and `strict=true` (default)
   - With `strict=false`, applies LWW conflict resolution (later value wins)
   - Spec: §13.4 Path Expansion, §14.5 Conflicts
 
-- **[`invalid/key-folding-non-identifier.toon`](invalid/key-folding-non-identifier.toon)** - Non-identifier segments (v1.5+)
-  - Contains keys like `first-name` with hyphens (not valid IdentifierSegments)
+- [`valid/key-folding-non-identifier.toon`](valid/key-folding-non-identifier.toon) - Non-identifier segments (v1.5+)
+  - Contains dotted keys with segments like `first-name` with hyphens (not valid IdentifierSegments)
+  - Keys are quoted (hyphens are not allowed in unquoted keys)
   - These remain as literal dotted keys when `expandPaths="safe"` is used
-  - Demonstrates safe mode validation: only expands keys with valid identifier segments
-  - Note: This is NOT an error – it's valid TOON, but shows when expansion doesn't occur
-  - Spec: §13.4 Safe Mode Requirements, §1.9 IdentifierSegment
+  - Spec: §13.4 Safe Mode Requirements, §1.9 IdentifierSegment, §7.3 Key Encoding
+
+- [`invalid/delimiter-mismatch.toon`](invalid/delimiter-mismatch.toon) - Header delimiter mismatch
+  - Declares pipe delimiter in brackets (`[N|]`) but uses comma-separated fields (`{a,b}`)
+  - MUST error in strict mode
+  - Spec: §6 Header Syntax (delimiter equality requirement)
 
 ## Conversions
 
 Side-by-side JSON ↔ TOON examples showing equivalent representations:
 
-- **[`conversions/users.json`](conversions/users.json)** + **[`conversions/users.toon`](conversions/users.toon)**
+- [`conversions/users.json`](conversions/users.json) + [`conversions/users.toon`](conversions/users.toon)
   - Same tabular data in both formats
   - Shows token reduction achieved by TOON (≈30-60% for tabular data)
   - Demonstrates the primary use case: uniform arrays of objects
 
-- **[`conversions/config.json`](conversions/config.json)** + **[`conversions/config.toon`](conversions/config.toon)** (v1.5+)
+- [`conversions/config.json`](conversions/config.json) + [`conversions/config.toon`](conversions/config.toon) (v1.5+)
   - Deeply nested configuration data (server, database, logging settings)
-  - Regenerated with `keyFolding="safe"`; because most objects are multi-key, folding halts quickly and the output stays primarily nested (the **stop condition**)
+  - Regenerated with `keyFolding="safe"`; because most objects are multi-key, folding halts quickly and the output stays primarily nested (the stop condition)
   - Shows ≈40-50% token reduction versus the JSON source while remaining spec-compliant
   - Highlights how safe folding behaves when little or no folding is permitted
 
-- **[`conversions/api-response.json`](conversions/api-response.json)** + **[`conversions/api-response.toon`](conversions/api-response.toon)** (v1.5+)
+- [`conversions/api-response.json`](conversions/api-response.json) + [`conversions/api-response.toon`](conversions/api-response.toon) (v1.5+)
   - API response with nested data and metadata
   - Regenerated with `keyFolding="safe"`; multi-sibling branches like `data` and `meta` stay fully nested instead of becoming dotted keys (stop condition on display)
   - Shows practical use case for serializing API responses while preserving deterministic structure
