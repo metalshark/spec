@@ -11,12 +11,12 @@ Complete, valid TOON files demonstrating core features:
 - [`valid/objects.toon`](valid/objects.toon) - Simple flat object with primitive values
   - Demonstrates basic key-value pairs
   - Shows multiple data types: string, number, boolean, null
-  - Spec: §6 Objects
+  - Spec: §8 Objects
 
 - [`valid/nested-objects.toon`](valid/nested-objects.toon) - Multi-level nested objects
   - Demonstrates indentation-based nesting (2 spaces per level)
   - Shows how objects can contain other objects
-  - Spec: §6 Objects, §4 Indentation
+  - Spec: §8 Objects, §12 Indentation
 
 ### Arrays
 
@@ -24,19 +24,19 @@ Complete, valid TOON files demonstrating core features:
   - Demonstrates compact inline format `[N]: item1,item2,item3`
   - Shows empty arrays `[0]:`
   - Multiple arrays in one document
-  - Spec: §7.1 Primitive Arrays
+  - Spec: §9.1 Primitive Arrays
 
 - [`valid/tabular-array.toon`](valid/tabular-array.toon) - Tabular array format (comma delimiter)
   - Demonstrates the most token-efficient format for uniform data
   - Header declares fields once: `{field1,field2,...}`
   - Rows contain only data values
-  - Spec: §7.2 Tabular Arrays
+  - Spec: §9.3 Tabular Arrays
 
 - [`valid/mixed-array.toon`](valid/mixed-array.toon) - Mixed-type array (list format)
   - Demonstrates list format with `-` prefix
   - Shows arrays containing different types (number, object, string)
   - Useful when items don't have uniform structure
-  - Spec: §7.3 Mixed Arrays
+  - Spec: §9.4 Mixed Arrays
 
 ### Delimiters
 
@@ -44,32 +44,37 @@ Complete, valid TOON files demonstrating core features:
   - Shows alternative delimiter for tabular arrays
   - Delimiter marker appears in both header `[N|]` and field list `{field|...}`
   - Useful when data contains commas
-  - Spec: §8 Delimiters
+  - Spec: §11 Delimiters
 
 - [`valid/tab-delimiter.toon`](valid/tab-delimiter.toon) - Tab delimiter (`\t`)
   - Demonstrates tab-separated tabular format
   - Tab character appears in both header and between fields
   - Useful for TSV-like data
-  - Spec: §8 Delimiters
+  - Spec: §11 Delimiters
 
 ### Key Folding and Path Expansion (v1.5+)
 
+> Regenerate any of these examples via the reference CLI, e.g. `npx @toon-format/cli --encode --keyFolding safe examples/valid/key-folding-basic.json --output examples/valid/key-folding-basic.toon`.
+
 - [`valid/key-folding-basic.toon`](valid/key-folding-basic.toon) - Basic dotted-key notation
-  - Demonstrates collapsing nested objects: `server.host: localhost` instead of 3 indentation levels
-  - Significant token savings for deeply nested configuration data
-  - Requires encoder option `keyFolding="safe"` to produce; decoder expands with `expandPaths="safe"`
+  - Demonstrates how `keyFolding="safe"` only folds chains of single-key objects (e.g. `server.host: localhost`)
+  - Notes that siblings such as `database.connection.username` need their own wrapper objects in the JSON source
+  - Generated directly from [`valid/key-folding-basic.json`](valid/key-folding-basic.json) using the CLI encoder
+  - **Decode tip:** use `expandPaths="safe"` to reconstruct the nested JSON structure
   - Spec: §13.4 Key Folding and Path Expansion
 
 - [`valid/key-folding-with-array.toon`](valid/key-folding-with-array.toon) - Dotted keys with arrays
-  - Shows folding combined with inline arrays: `data.meta.items[3]: x,y,z`
-  - Demonstrates that folding stops at array boundaries (arrays terminate chains)
-  - Useful for API responses and structured data with nested metadata
+  - Shows folding combined with inline arrays: `data.meta.items[3]: widget,gadget,tool`
+  - Adds folded scalar `stats.meta.count: 3` plus folded array `user.preferences.tags[2]: …`
+  - Shows that arrays stop the folding chain yet remain inline when the parent chain qualifies
+  - **Decode tip:** use `expandPaths="safe"` to reconstruct the nested JSON structure
   - Spec: §13.4 Key Folding
 
 - [`valid/key-folding-mixed.toon`](valid/key-folding-mixed.toon) - Mixed folding strategies
-  - Shows both folded (`app.name: MyApp`) and regular nested keys in same document
-  - Demonstrates `flattenDepth` control for partial folding
-  - Allows selective use of dotted notation where most beneficial
+  - Combines standard nested objects (`app`, `server`) with folded keys (`database.connection.url`, `feature.flags.beta`)
+  - Shows the encoder mixing folded and non-folded sections within the same document
+  - Useful when only some branches meet the single-key-chain requirement
+  - **Decode tip:** use `expandPaths="safe"` to reconstruct the nested JSON structure
   - Spec: §13.4 Key Folding
 
 - [`valid/path-expansion-merge.toon`](valid/path-expansion-merge.toon) - Deep merge behavior
@@ -85,12 +90,12 @@ Examples that intentionally violate TOON syntax rules:
 - **[`invalid/length-mismatch.toon`](invalid/length-mismatch.toon)** - Array length mismatch
   - Declares `[3]` but provides only 2 items
   - Should fail validation in strict mode
-  - Spec: §9 Validation
+  - Spec: §14.1 Strict Mode (Array Count & Width)
 
 - **[`invalid/missing-colon.toon`](invalid/missing-colon.toon)** - Missing colon after key
-  - Keys must be followed by `: ` (colon + space)
+  - Keys must be followed by `:`; when a value appears on the same line, the format MUST be `: ` (colon + single space)
   - Demonstrates common syntax error
-  - Spec: §6 Objects
+  - Spec: §8 Objects, §14.2 Syntax Errors
 
 - **[`invalid/path-expansion-conflict-strict.toon`](invalid/path-expansion-conflict-strict.toon)** - Path expansion conflict (v1.5+)
   - First line creates nested path `user.profile.name`, second line tries to assign primitive to `user.profile`
@@ -102,7 +107,7 @@ Examples that intentionally violate TOON syntax rules:
   - Contains keys like `first-name` with hyphens (not valid IdentifierSegments)
   - These remain as literal dotted keys when `expandPaths="safe"` is used
   - Demonstrates safe mode validation: only expands keys with valid identifier segments
-  - Note: This is NOT an error—it's valid TOON, but shows when expansion doesn't occur
+  - Note: This is NOT an error – it's valid TOON, but shows when expansion doesn't occur
   - Spec: §13.4 Safe Mode Requirements, §1.9 IdentifierSegment
 
 ## Conversions
@@ -116,15 +121,15 @@ Side-by-side JSON ↔ TOON examples showing equivalent representations:
 
 - **[`conversions/config.json`](conversions/config.json)** + **[`conversions/config.toon`](conversions/config.toon)** (v1.5+)
   - Deeply nested configuration data (server, database, logging settings)
-  - TOON version uses dotted-key notation (`database.connection.host: localhost`)
-  - Shows ≈40-50% token reduction for deeply nested structures
-  - Demonstrates key folding benefits for configuration files
+  - Regenerated with `keyFolding="safe"`; because most objects are multi-key, folding halts quickly and the output stays primarily nested (the **stop condition**)
+  - Shows ≈40-50% token reduction versus the JSON source while remaining spec-compliant
+  - Highlights how safe folding behaves when little or no folding is permitted
 
 - **[`conversions/api-response.json`](conversions/api-response.json)** + **[`conversions/api-response.toon`](conversions/api-response.toon)** (v1.5+)
   - API response with nested data and metadata
-  - TOON version collapses nested paths (`data.attributes.name: Ada Lovelace`)
-  - Shows practical use case for serializing API responses
-  - Demonstrates how key folding maintains readability while reducing tokens
+  - Regenerated with `keyFolding="safe"`; multi-sibling branches like `data` and `meta` stay fully nested instead of becoming dotted keys (stop condition on display)
+  - Shows practical use case for serializing API responses while preserving deterministic structure
+  - `expandPaths="safe"` is not required for this file (no folded keys)
 
 ## Using These Examples
 
